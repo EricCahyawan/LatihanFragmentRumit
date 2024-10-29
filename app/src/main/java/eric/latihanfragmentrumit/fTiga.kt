@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,12 +37,38 @@ class fTiga : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_f_tiga, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val _input = view.findViewById<EditText>(R.id.input)
+        val _btnSendData = view.findViewById<Button>(R.id.btnSendData)
+        _btnSendData.setOnClickListener {
+            val firstNumber = _input.text.toString().toIntOrNull()
+            if (firstNumber != null) {
+                val bundle = Bundle().apply {
+                    putInt("firstNumber", firstNumber)
+                }
+
+                val mfSatu = fSatu().apply {
+                    arguments = bundle
+                }
+
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.frameLayout, mfSatu, fSatu::class.java.simpleName)
+                    addToBackStack(null)
+                    commit()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.findViewById<EditText>(R.id.input)?.setText("Input Number")
     }
 
     companion object {

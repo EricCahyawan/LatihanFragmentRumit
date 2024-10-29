@@ -43,9 +43,10 @@ class fSatu : Fragment() {
         return inflater.inflate(R.layout.fragment_f_satu, container, false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val firstNumber = 1
+        val firstNumber = arguments?.getInt("firstNumber") ?: 1
         val lastNumber = firstNumber + 4
         val numbers = Array(10) { 0 }
         var firstCardOpen = false
@@ -100,6 +101,19 @@ class fSatu : Fragment() {
             view.findViewById<CardView>(R.id.card10)
         )
 
+        val isCardViewsInvisible = arrayOf(
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+        )
+
         fun resetCards() {
             Handler(Looper.getMainLooper()).postDelayed({
                 for (i in cardOpen.indices) {
@@ -127,14 +141,16 @@ class fSatu : Fragment() {
                             if (cardOpen[i]) {
                                 textViews[i].visibility = View.INVISIBLE
                                 cardViews[i].visibility = View.INVISIBLE
+                                isCardViewsInvisible[i] = true // Mengubah isCardViewsInvisible menjadi true untuk kartu yang cocok
                             }
+                        }
+
+                        // Cek apakah semua kartu sudah invisible
+                        if (isCardViewsInvisible.all { it }) {
+                            navigateToFragmentDua()
                         }
                     }, 1000)
 
-                    if (cardOpen.all { !it }) {
-                        // Pindah ke fragment fDua saat semua kartu hilang
-                        navigateToFragmentDua()
-                    }
                 } else {
                     score -= 5
                     _score.text = "Score: $score"
@@ -146,6 +162,7 @@ class fSatu : Fragment() {
                 secondCardValue = null
             }
         }
+
 
         fun handleCardClick(cardIndex: Int, textView: TextView, card: CardView) {
             if (!firstCardOpen && !secondCardOpen) {
